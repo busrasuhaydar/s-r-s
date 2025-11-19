@@ -263,14 +263,17 @@
         const cubeCamera = new THREE.CubeCamera(0.1, 1000, cubeRenderTarget);
         scene.add(cubeCamera);
         
-        // 🛣️ Road CubeCamera - PROFESYONEL SMOOTH YANSIMA!
-        const roadCubeRenderTarget = new THREE.WebGLCubeRenderTarget(isMobile ? 2048 : 4096, {
-            format: THREE.RGBAFormat,  // RGBA = smooth blending, no banding!
+        // 🛣️ Road CubeCamera - ULTRA PROFESYONEL SMOOTH YANSIMA! Anti-Banding!
+        const roadCubeRenderTarget = new THREE.WebGLCubeRenderTarget(isMobile ? 1024 : 2048, {
+            format: THREE.RGBAFormat,
+            type: THREE.HalfFloatType,  // 🔥 Half Float = No Banding, Smooth Gradients!
             generateMipmaps: true,
             minFilter: THREE.LinearMipmapLinearFilter,
             magFilter: THREE.LinearFilter,
             encoding: THREE.sRGBEncoding,
-            anisotropy: renderer.capabilities.getMaxAnisotropy()  // 🔥 Maksimum anisotropic = çizgi yok!
+            anisotropy: renderer.capabilities.getMaxAnisotropy(),  // 🔥 Max anisotropic!
+            wrapS: THREE.ClampToEdgeWrapping,  // 🔥 Kenar yumuşatma
+            wrapT: THREE.ClampToEdgeWrapping
         });
         const roadCubeCamera = new THREE.CubeCamera(0.1, 5000, roadCubeRenderTarget);
         roadCubeCamera.position.set(0, 10, 0);  // 🎯 Orta yükseklik - hem yakın hem uzak iyi görünsün!
@@ -1362,30 +1365,36 @@
                             materials.forEach(mat => {
                                 
                                 if (isRoad) {
-                                    // 🛣️ YOL - TAM CAM GİBİ AYNA! KUSURSUZ YANSIMA!
-                                    mat.metalness = 1.0;          // Tam metalik
-                                    mat.roughness = 0.0;          // 0.01 → 0.0 (TAM PÜRÜZSÜZ CAM!)
-                                    mat.ior = 2.417;              // 2.5 → 2.417 (gerçek cam IOR!)
-                                    mat.reflectivity = 1.0;       // Maksimum yansıma
-                                    
-                                    mat.clearcoat = 1.0;          // Tam clearcoat
-                                    mat.clearcoatRoughness = 0.0; // 0.01 → 0.0 (TAM PÜRÜZSÜZ!)
-                                    
-                                    // 🛣️ MAKSIMUM GÜÇLÜ YANSIMA!
+                                    // 🛣️ YOL - PROFESYONEL ISLAK ASFALT! Gerçekçi Hafif Yansıma
+                                    mat.metalness = 0.15;         // Hafif metalik (ıslak asfalt)
+                                    mat.roughness = 0.35;         // Pürüzlü yüzey (gerçekçi asfalt)
+                                    mat.ior = 1.5;                // Su/ıslak yüzey IOR (cam değil!)
+                                    mat.reflectivity = 0.4;       // Orta yansıma (gerçekçi)
+
+                                    mat.clearcoat = 0.6;          // Hafif ıslak katman efekti
+                                    mat.clearcoatRoughness = 0.15; // Yumuşak clearcoat
+
+                                    // 🛣️ PROFESYONEL HASSAS YANSIMA - Çizgisiz, Smooth, Hafif!
                                     mat.envMap = roadCubeRenderTarget.texture;
-                                    mat.envMapIntensity = 10.0;   // 7.0 → 10.0 (ULTRA GÜÇLÜ!)
-                                    
-                                    // 🔥 KRITIK: Texture anisotropy
+                                    mat.envMapIntensity = 0.8;    // 10.0 → 0.8 (Hafif, gerçekçi yansıma!)
+
+                                    // 🔥 KRITIK: Texture anisotropy - Ultra smooth!
                                     if (mat.map) {
                                         mat.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                                        mat.map.minFilter = THREE.LinearMipmapLinearFilter;
+                                        mat.map.magFilter = THREE.LinearFilter;
+                                        mat.map.generateMipmaps = true;
                                     }
-                                    
-                                    // 🔥 envMap texture smooth yapıyoruz!
+
+                                    // 🔥 envMap texture ultra smooth yapıyoruz!
                                     if (roadCubeRenderTarget.texture) {
                                         roadCubeRenderTarget.texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                                        roadCubeRenderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
+                                        roadCubeRenderTarget.texture.magFilter = THREE.LinearFilter;
+                                        roadCubeRenderTarget.texture.generateMipmaps = true;
                                         roadCubeRenderTarget.texture.needsUpdate = true;
                                     }
-                                    
+
                                 } else {
                                     // 🏎️ ARABA - NORMAL BOYALI YÜZEY, METALLİK YOK!
                                     mat.metalness = 0.0;  // 1.0 → 0.0 METALLİK KAPALI!
