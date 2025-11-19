@@ -263,8 +263,8 @@
         const cubeCamera = new THREE.CubeCamera(0.1, 1000, cubeRenderTarget);
         scene.add(cubeCamera);
         
-        // 🛣️ Road CubeCamera - ULTRA PROFESYONEL SMOOTH YANSIMA! Anti-Banding!
-        const roadCubeRenderTarget = new THREE.WebGLCubeRenderTarget(isMobile ? 1024 : 2048, {
+        // 🛣️ Road CubeCamera - ULTRA HIGH QUALITY! Çizgisiz, Piksel Piksel YOK!
+        const roadCubeRenderTarget = new THREE.WebGLCubeRenderTarget(isMobile ? 2048 : 4096, {
             format: THREE.RGBAFormat,
             type: THREE.HalfFloatType,  // 🔥 Half Float = No Banding, Smooth Gradients!
             generateMipmaps: true,
@@ -272,7 +272,7 @@
             magFilter: THREE.LinearFilter,
             encoding: THREE.sRGBEncoding,
             anisotropy: renderer.capabilities.getMaxAnisotropy(),  // 🔥 Max anisotropic!
-            wrapS: THREE.ClampToEdgeWrapping,  // 🔥 Kenar yumuşatma
+            wrapS: THREE.ClampToEdgeWrapping,  // 🔥 Kenar yumuşatma - çizgi yok!
             wrapT: THREE.ClampToEdgeWrapping
         });
         const roadCubeCamera = new THREE.CubeCamera(0.1, 5000, roadCubeRenderTarget);
@@ -1365,28 +1365,29 @@
                             materials.forEach(mat => {
                                 
                                 if (isRoad) {
-                                    // 🛣️ YOL - PROFESYONEL ISLAK ASFALT! Gerçekçi Hafif Yansıma
-                                    mat.metalness = 0.15;         // Hafif metalik (ıslak asfalt)
-                                    mat.roughness = 0.35;         // Pürüzlü yüzey (gerçekçi asfalt)
-                                    mat.ior = 1.5;                // Su/ıslak yüzey IOR (cam değil!)
-                                    mat.reflectivity = 0.4;       // Orta yansıma (gerçekçi)
+                                    // 🛣️ YOL - ULTRA SMOOTH MIRROR! Çizgisiz, Piksel Piksel YOK!
+                                    mat.metalness = 1.0;          // Tam metalik - AYNA etkisi!
+                                    mat.roughness = 0.0;          // TAM PÜRÜZSÜZ!
+                                    mat.ior = 2.417;              // Gerçek cam IOR
+                                    mat.reflectivity = 1.0;       // Maksimum yansıma!
 
-                                    mat.clearcoat = 0.6;          // Hafif ıslak katman efekti
-                                    mat.clearcoatRoughness = 0.15; // Yumuşak clearcoat
+                                    mat.clearcoat = 1.0;          // Tam clearcoat
+                                    mat.clearcoatRoughness = 0.0; // TAM PÜRÜZSÜZ clearcoat!
 
-                                    // 🛣️ PROFESYONEL HASSAS YANSIMA - Çizgisiz, Smooth, Hafif!
+                                    // 🛣️ MAKSIMUM YANSIMA - ULTRA SMOOTH!
                                     mat.envMap = roadCubeRenderTarget.texture;
-                                    mat.envMapIntensity = 0.8;    // 10.0 → 0.8 (Hafif, gerçekçi yansıma!)
+                                    mat.envMapIntensity = 10.0;   // ULTRA GÜÇLÜ yansıma!
 
-                                    // 🔥 KRITIK: Texture anisotropy - Ultra smooth!
+                                    // 🔥 ULTRA SMOOTH: Maksimum kaliteli texture filtering!
                                     if (mat.map) {
                                         mat.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
                                         mat.map.minFilter = THREE.LinearMipmapLinearFilter;
                                         mat.map.magFilter = THREE.LinearFilter;
                                         mat.map.generateMipmaps = true;
+                                        mat.map.needsUpdate = true;
                                     }
 
-                                    // 🔥 envMap texture ultra smooth yapıyoruz!
+                                    // 🔥 KRITIK: envMap texture ULTRA SMOOTH - Çizgi YOK, Banding YOK!
                                     if (roadCubeRenderTarget.texture) {
                                         roadCubeRenderTarget.texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
                                         roadCubeRenderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
